@@ -91,7 +91,7 @@ namespace veloce {
                 std::forward<Func>(func)
             );
 
-            auto future = task->get_future();
+            auto future = task.get_future();
 
             push_task(
                 [task = std::move(task)]() mutable {

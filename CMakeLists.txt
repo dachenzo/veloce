@@ -19,4 +19,5 @@ target_sources(
     INTERFACE
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/parallel.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/thread_pool.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/chunker.hpp"
 )
