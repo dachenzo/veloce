@@ -18,6 +18,14 @@ target_sources(
     veloce
     INTERFACE
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/parallel.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/parallel_reduce.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/thread_pool.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/chunker.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/concepts.hpp"
 )
+
+add_executable(veloce_parallel_bench bench/parallel.cpp)
+target_link_libraries(veloce_parallel_bench PRIVATE veloce)
+
+add_executable(veloce_parallel_reduce_bench bench/parallel_reduce.cpp)
+target_link_libraries(veloce_parallel_reduce_bench PRIVATE veloce)
