@@ -1,5 +1,7 @@
 #pragma once
 #include <concepts>
+#include <iterator>
+#include <ranges>
 #include <type_traits>
 
 namespace veloce {
@@ -16,7 +18,22 @@ namespace veloce {
     template<typename  Func, typename T>
     concept CopyableBinaryAssociativeFunctionOn = BinaryAssociativeFunctionOn<Func, T> &&  CopyableFunction<Func>;
 
+    template<typename Func, typename T, typename R> 
+    concept CopyableUnaryFunction = std::invocable<Func, T> && std::same_as<std::invoke_result_t<Func, T>, R> && CopyableFunction<Func>;
+
     template<typename Func, typename T>
-    concept CopyableEndoFunctionOn = std::invocable<Func, T> &&
-    std::same_as<std::invoke_result_t<Func, T>, T> &&  CopyableFunction<Func>;
+    concept CopyableEndoFunctionOn = CopyableUnaryFunction<Func, T, T>;
+
+    template <
+        typename Input,
+        typename Output,
+        typename Func
+    >
+    concept RandomAccessReadWriteOn =
+        std::ranges::random_access_range<Input> &&
+        std::ranges::random_access_range<Output> &&
+        CopyableFunction<Func> &&
+        std::invocable<Func&, std::ranges::range_reference_t<Input>> &&
+        std::indirectly_writable<std::ranges::iterator_t<Output>, 
+        std::invoke_result_t<Func&,  std::ranges::range_reference_t<Input>>>;
 }
