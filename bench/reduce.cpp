@@ -1,5 +1,5 @@
-#include <veloce/parallel_reduce.hpp>
-
+#include <veloce/reduce.hpp>
+#include <veloce/definitions.hpp>
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
@@ -16,7 +16,7 @@ using Clock = std::chrono::steady_clock;
 using Microseconds = std::chrono::duration<double, std::micro>;
 
 constexpr std::size_t default_element_count = 50'000'000;
-constexpr std::size_t default_iterations = 9;
+constexpr std::size_t default_iterations = 20;
 constexpr std::size_t max_thread_count = 4;
 
 double median(std::vector<double> samples) {
@@ -35,13 +35,12 @@ int main() {
 	std::iota(input.begin(), input.end(), std::uint64_t{1});
 
 	veloce::ThreadPool pool(thread_count);
-	veloce::ParallelReduce parallel_reduce(pool);
+	veloce::Reduce parallel_reduce(pool);
 	std::vector<double> serial_samples;
 	std::vector<double> parallel_samples;
 	serial_samples.reserve(iterations);
 	parallel_samples.reserve(iterations);
 
-	std::uint64_t checksum = 0;
 	for (std::size_t iteration = 0; iteration < iterations; ++iteration) {
 		std::uint64_t serial_result = 0;
 		std::uint64_t parallel_result = 0;
@@ -78,7 +77,6 @@ int main() {
 			return 1;
 		}
 
-		checksum ^= parallel_result;
 		serial_samples.push_back(serial_time);
 		parallel_samples.push_back(parallel_time);
 	}
@@ -91,6 +89,5 @@ int main() {
 			  << "Worker threads:  " << thread_count << '\n'
 			  << "Serial median:   " << serial_median / 1000.0 << " ms\n"
 			  << "Parallel median: " << parallel_median / 1000.0 << " ms\n"
-			  << "Speedup:         " << serial_median / parallel_median << "x\n"
-			  << "Checksum:        " << checksum << '\n';
+			  << "Speedup:         " << serial_median / parallel_median << "x\n";
 }
