@@ -31,7 +31,9 @@ namespace veloce {
     >
     concept RandomAccessReadWriteOn =
         std::ranges::random_access_range<Input> &&
+        std::ranges::sized_range<Input> &&
         std::ranges::random_access_range<Output> &&
+        std::ranges::sized_range<Output> &&
         CopyableFunction<Func> &&
         std::invocable<Func&, std::ranges::range_reference_t<Input>> &&
         std::indirectly_writable<std::ranges::iterator_t<Output>, 
