@@ -24,16 +24,17 @@ namespace veloce {
     template<typename Func, typename T>
     concept CopyableEndoFunctionOn = CopyableUnaryFunction<Func, T, T>;
 
+    template<typename Container>
+    concept RandomAccessSizedRange = std::ranges::random_access_range<Container> && std::ranges::sized_range<Container>;
+
     template <
         typename Input,
         typename Output,
         typename Func
     >
     concept RandomAccessReadWriteOn =
-        std::ranges::random_access_range<Input> &&
-        std::ranges::sized_range<Input> &&
-        std::ranges::random_access_range<Output> &&
-        std::ranges::sized_range<Output> &&
+        RandomAccessSizedRange<Input> &&
+        RandomAccessSizedRange<Output> &&
         CopyableFunction<Func> &&
         std::invocable<Func&, std::ranges::range_reference_t<Input>> &&
         std::indirectly_writable<std::ranges::iterator_t<Output>, 
