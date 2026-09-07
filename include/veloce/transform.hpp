@@ -1,3 +1,4 @@
+#pragma once
 #include <ranges>
 #include <exception>
 #include <future>
@@ -6,23 +7,23 @@
 #include <veloce/concepts.hpp>
 #include <veloce/thread_pool.hpp>
 
-namespace Veloce {
+namespace veloce {
 
     class Transform {
         veloce::ThreadPool& pool;
-
+        
+        public:
         Transform(veloce::ThreadPool& pool): pool{pool} {}
         Transform(Transform& other) = delete;
         Transform(Transform&& other) = delete;
 
-        public:
         template<
             typename Func,
             typename Input,
             typename Output
         >
         requires veloce::RandomAccessReadWriteOn<Input, Output, Func>
-        void operator()(Func&& func, Input in, Output out) {
+        void operator()(Func&& func, Input&& in, Output&& out) {
             if (std::ranges::size(in) > std::ranges::size(out)) {
                 throw std::runtime_error("Input Container size is less than output container");
             }
@@ -34,13 +35,13 @@ namespace Veloce {
             try {
                 for (auto& chunk: chunks) {
                     chunk_results.push_back(
-                            pool.submit([chunk = chunk, func = func, &in, &out]() {
+                            pool.submit([chunk, func = func, &in, &out]() mutable {
                             auto in_it = std::ranges::begin(in) + chunk.start;
                             auto out_it = std::ranges::begin(out) + chunk.start;
                             auto end = std::ranges::begin(in) + chunk.end;
                             for (; in_it < end; in_it++) {
                                 *out_it = func(*in_it);
-                                *out_it++;
+                                ++out_it;
                             }
                         })
                     );

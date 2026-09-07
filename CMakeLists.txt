@@ -24,6 +24,8 @@ target_sources(
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/concepts.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/definitions.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/transform_reduce.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/include/veloce/transform.hpp"
+
 )
 
 add_executable(veloce_parallel_bench bench/parallel.cpp)
@@ -31,3 +33,6 @@ target_link_libraries(veloce_parallel_bench PRIVATE veloce)
 
 add_executable(veloce_reduce_bench bench/reduce.cpp)
 target_link_libraries(veloce_reduce_bench PRIVATE veloce)
+
+add_executable(main main.cpp)
+target_link_libraries(main PRIVATE veloce)
